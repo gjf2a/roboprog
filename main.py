@@ -4,6 +4,11 @@ from ev3dev2.motor import Motor, OUTPUT_A, OUTPUT_B
 from ev3dev2.sensor import INPUT_1, INPUT_2, INPUT_3, INPUT_4
 from ev3dev2.sensor.lego import TouchSensor, UltrasonicSensor
 from ev3dev2.sound import Sound
+from ev3dev2.display import Display
+
+screen = Display()
+screen.text_grid("Hello")
+screen.update()
 
 spkr = Sound()
 spkr.tone(440, 500)

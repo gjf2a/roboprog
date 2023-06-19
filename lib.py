@@ -31,3 +31,7 @@ class Table:
             if c.met():
                 a.act()
                 break
+
+
+def menu(items):
+    
