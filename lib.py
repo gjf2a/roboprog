@@ -1,3 +1,5 @@
+from ev3dev2.display import Display
+
 class Condition:
     def __init__(self, sensor, checker, op, threshold):
         self.sensor = sensor
@@ -33,5 +35,18 @@ class Table:
                 break
 
 
-def menu(items):
-    
+class Menu:
+    def __init__(self, items):
+        self.items = items
+        self.current = 0
+
+    def show(self):
+        screen = Display()
+        screen.clear()
+        for i in range(len(self.items)):
+            text = self.items[i]
+            if i == self.current:
+                text += '*'
+            screen.draw.text((0, i), text)
+        screen.update()
+

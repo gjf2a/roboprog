@@ -7,7 +7,7 @@ from ev3dev2.sound import Sound
 from ev3dev2.display import Display
 
 screen = Display()
-screen.text_grid("Hello")
+screen.draw.text((0, 1), "Hello", inverse=False)
 screen.update()
 
 spkr = Sound()
