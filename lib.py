@@ -12,6 +12,10 @@ def waitNonePressed(ev3):
 
 motor_ports = [Port.A, Port.B, Port.C, Port.D]
 sensor_ports = [Port.S1, Port.S2, Port.S3, Port.S4]
+CONDITION_ASPECTS = 4
+
+def extract_port(port):
+    return str(port).split('.')[1]
 
 class Program:
     def __init__(self, motors, sensors):
@@ -21,7 +25,7 @@ class Program:
             m = chr(ord('A') + i)
             if motors[i] == 'Motor':
                 self.motors[m] = Motor(motor_ports[i])
-                self.motor_ports.append(motor_ports[i])
+                self.motor_ports.append(extract_port(motor_ports[i]))
             else:
                 self.motors[m] = None
 
@@ -33,12 +37,12 @@ class Program:
             s = 'S' + str(i + 1)
             if sensors[i] == 'Touch':
                 self.sensors[s] = TouchSensor(sensor_ports[i])
-                self.sensor_ports.append(sensor_ports[i])
+                self.sensor_ports.append(extract_port(sensor_ports[i]))
                 self.comparisons[s] = ['=']
                 self.thresholds[s] = ['1', '0']
             elif sensors[i] == 'Sonar':
                 self.sensors[s] = UltrasonicSensor(sensor_ports[i])
-                self.sensor_ports.append(sensor_ports[i])
+                self.sensor_ports.append(extract_port(sensor_ports[i]))
                 self.comparisons[s] = ['<', '>']
                 self.thresholds[s] = [str(i * 10) for i in range(1, 16)]
             else:
@@ -50,18 +54,20 @@ class Program:
         self.actions = {}
         self.tables = {}
 
+    def condition_choice_list(self, condition_name):
+        pass
+
     def condition_option_list_and_choices(self, condition_name):
         if condition_name not in self.conditions:
             p = self.sensor_ports[0]
-            self.conditions[condition_name] = Condition(condition_name, p, self.comparisons[p], self.thresholds[p])
+            self.conditions[condition_name] = Condition(condition_name, p, self.comparisons[p][0], self.thresholds[p][0])
         c = self.conditions[condition_name]
-        multi = [[]] * len(self.conditions)
-        for name in sorted(self.conditions):
-            multi[0].append(name)
-            p = self.conditions[name].port
-            multi[1].append(p)
-            multi[2].append(self.comparisons[p])
-            multi[3].append(self.thresholds[p])
+        multi = [
+            [name for name in sorted(self.conditions)], 
+            self.sensor_ports, 
+            self.comparisons[c.port], 
+            self.thresholds[c.port]
+        ]
         return multi, c.choice_indices(self)
 
     def condition_options(self, port):
@@ -89,6 +95,9 @@ class Condition:
         self.port = port
         self.op = op
         self.threshold = threshold
+
+    def __repr__(self):
+        return '[' + ','.join([self.name, self.port, self.op, self.threshold]) + ']'
 
     def choice_indices(self, program):
         name_i = int(self.name[1:]) - 1

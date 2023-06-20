@@ -73,7 +73,7 @@ def menuManyOptions(ev3, list_labels: List[str], multi_option_list: List[List[st
             down = False
 
     lib.waitNonePressed(ev3)
-    return choices
+    return [multi_option_list[i][choices[i]] for i in range(len(choices))]
 
 
 def refreshMany(ev3, list_labels: List[str], multi_option_list: List[List[str]], row: int, options: List[int]):

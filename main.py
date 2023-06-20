@@ -9,18 +9,24 @@ from pybricks.media.ev3dev import SoundFile, ImageFile
 
 import menus, lib
 
+motor_ports = ['A', 'B', 'C', 'D']
+motor_port_options = [['None', 'Motor']] * len(motor_ports)
+sensor_ports = ['S1', 'S2', 'S3', 'S4']
+sensor_port_options = [['None', 'Touch', 'Sonar']] * len(sensor_ports)
+
 def main():
     ev3 = EV3Brick()
+    ev3.speaker.beep()
 
-    motors = menus.menuManyOptions(ev3, ['A', 'B', 'C', 'D'], [['None', 'Motor']] * 4)
-    sensors = menus.menuManyOptions(ev3, ['1', '2', '3', '4'], [['None', 'Touch', 'Sonar']] * 4)
+    motors = menus.menuManyOptions(ev3, motor_ports, motor_port_options)
+    sensors = menus.menuManyOptions(ev3, sensor_ports, sensor_port_options)
 
     program = lib.Program(motors, sensors)
     start = False
     while not start:
         choice = menus.menuShowAll(ev3, ['Conditions', 'Actions', 'Tables', 'Start'])
         if choice == 0:
-            pass
+            condition_menu(ev3, program)
         elif choice == 1:
             pass
         elif choice == 2:
@@ -37,8 +43,9 @@ def condition_menu(ev3, program):
     name = 0
     row = 0
     down = False
-    multi_option_list, choices = program.condition_option_list_and_choices(program.sensor_ports[0])
+    multi_option_list, choices = program.condition_option_list_and_choices(names[0])
     menus.refreshMany(ev3, rows, multi_option_list, row, choices)
+    print(program.conditions[names[0]], multi_option_list, choices)
     while True:
         pressed = ev3.buttons.pressed()
         if len(pressed) > 0:
@@ -61,8 +68,6 @@ def condition_menu(ev3, program):
             down = False
 
     lib.waitNonePressed(ev3)
-    return lib.Condition()
-    return choices
 
 
 
