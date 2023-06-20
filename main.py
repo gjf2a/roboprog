@@ -1,40 +1,70 @@
-#!/usr/bin/env python3
-import time
-from ev3dev2.motor import Motor, OUTPUT_A, OUTPUT_B
-from ev3dev2.sensor import INPUT_1, INPUT_2, INPUT_3, INPUT_4
-from ev3dev2.sensor.lego import TouchSensor, UltrasonicSensor
-from ev3dev2.sound import Sound
-from ev3dev2.display import Display
+#!/usr/bin/env pybricks-micropython
+from pybricks.hubs import EV3Brick
+from pybricks.ev3devices import (Motor, TouchSensor, ColorSensor,
+                                 InfraredSensor, UltrasonicSensor, GyroSensor)
+from pybricks.parameters import Port, Stop, Direction, Button, Color
+from pybricks.tools import wait, StopWatch, DataLog
+from pybricks.robotics import DriveBase
+from pybricks.media.ev3dev import SoundFile, ImageFile
 
-screen = Display()
-screen.draw.text((0, 1), "Hello", inverse=False)
-screen.update()
+import menus, lib
 
-spkr = Sound()
-spkr.tone(440, 500)
+def main():
+    ev3 = EV3Brick()
 
-left = Motor(OUTPUT_A)
-right = Motor(OUTPUT_B)
+    motors = menus.menuManyOptions(ev3, ['A', 'B', 'C', 'D'], [['None', 'Motor']] * 4)
+    sensors = menus.menuManyOptions(ev3, ['1', '2', '3', '4'], [['None', 'Touch', 'Sonar']] * 4)
 
-left_bump = TouchSensor(INPUT_1)
-right_bump = TouchSensor(INPUT_2)
-sonar = UltrasonicSensor(INPUT_3)
+    program = lib.Program(motors, sensors)
+    start = False
+    while not start:
+        choice = menus.menuShowAll(ev3, ['Conditions', 'Actions', 'Tables', 'Start'])
+        if choice == 0:
+            pass
+        elif choice == 1:
+            pass
+        elif choice == 2:
+            pass
+        elif choice == 3:
+            start = True
 
-start = time.time()
 
-while time.time() - start < 5:
-    if sonar.distance_centimeters < 30:
-        left.on(-25)
-        right.on(-25)
-    else:
-        if left_bump.is_pressed:
-            left.on(-25)
+def condition_menu(ev3, program):
+    menus.wait_until_clear(ev3)
+    rows = ['Name', 'Port', 'Op', 'Threshold']
+    names = ["C" + str(i + 1) for i in range(program.num_conditions() + 1)]
+    ports = program.live_sensors()
+    name = 0
+    row = 0
+    down = False
+    multi_option_list, choices = program.condition_option_list_and_choices(program.sensor_ports[0])
+    menus.refreshMany(ev3, rows, multi_option_list, row, choices)
+    while True:
+        pressed = ev3.buttons.pressed()
+        if len(pressed) > 0:
+            if not down:
+                ev3.speaker.beep()
+                down = True
+                if Button.CENTER in pressed:
+                    break
+                elif Button.UP in pressed:
+                    row = mod_dec(row, len(rows))
+                elif Button.DOWN in pressed:
+                    row = mod_inc(row, len(rows))
+                elif Button.LEFT in pressed:
+                    choices[row] = mod_dec(choices[row], len(multi_option_list[row]))
+                elif Button.RIGHT in pressed:
+                    choices[row] = mod_inc(choices[row], len(multi_option_list[row]))
+                multi_option_list, choices = program.condition_option_list_and_choices(program.sensor_ports[choices[1]])
+                menus.refreshMany(ev3, rows, multi_option_list, row, choices)
         else:
-            left.on(25)
-        if right_bump.is_pressed:
-            right.on(-25)
-        else:
-            right.on(25)
+            down = False
 
-left.stop()
-right.stop()
+    lib.waitNonePressed(ev3)
+    return lib.Condition()
+    return choices
+
+
+
+if __name__ == '__main__':
+    main()
