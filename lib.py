@@ -2,6 +2,8 @@ from pybricks.ev3devices import (Motor, TouchSensor, ColorSensor,
                                  InfraredSensor, UltrasonicSensor, GyroSensor)
 from pybricks.parameters import Port, Stop, Direction, Button, Color
 
+import time
+
 TEXT_HEIGHT = 16
 
 def waitNonePressed(ev3):
@@ -83,13 +85,19 @@ class Program:
             if len(pressed) > 0:
                 break
             readings = self.check_all_conditions()
-            print(readings)
+            print("readings", readings)
+            ev3.screen.clear()
+            for i, s in enumerate(readings):
+                ev3.screen.draw_text(0, i * TEXT_HEIGHT, str(readings[s][0]) + " " + str(readings[s][1]))
             for name in sorted(self.rows):
                 row = self.rows[name]
+                print("row", row)
                 if row.is_selected(readings):
                     for action in row.actions(self):
+                        print("action", action)
                         action.act(self)
                     break
+            time.sleep(0.25)
 
         
 
@@ -210,7 +218,7 @@ class Row:
         self.action3 = action3
 
     def __repr__(self):
-        return '[' + ','.join(["'" + s + "'" for s in [self.name, self.condition, self.invert, self.action2, self.action3]]) + ']'
+        return '[' + ','.join(["'" + s + "'" for s in [self.name, self.condition, self.invert, self.action1, self.action2, self.action3]]) + ']'
 
     def choice_indices(self, program):
         name_i = extract_num(self.name)
@@ -222,7 +230,10 @@ class Row:
         return [name_i, condition_i, invert_i, action_1, action_2, action_3]
 
     def is_selected(self, readings):
-        return self.condition in readings and readings[self.condition][2] == str(not eval(self.invert))
+        if self.condition in readings:
+            print(readings[self.condition][2])
+            print(str(not eval(self.invert)))
+        return self.condition in readings and readings[self.condition][2] != eval(self.invert)
 
     def actions(self, program):
         return [program.actions[action] for action in [self.action1, self.action2, self.action3] if action != 'None']
