@@ -54,9 +54,6 @@ class Program:
         self.actions = {}
         self.tables = {}
 
-    def condition_choice_list(self, condition_name):
-        pass
-
     def condition_option_list_and_choices(self, condition_name):
         if condition_name not in self.conditions:
             p = self.sensor_ports[0]
@@ -69,6 +66,12 @@ class Program:
             self.thresholds[c.port]
         ]
         return multi, c.choice_indices(self)
+
+    def change_condition_port(self, condition_name, new_port):
+        c = self.conditions[condition_name]
+        c.port = new_port
+        c.op = self.comparisons[new_port][0]
+        c.threshold = self.thresholds[new_port][0]
 
     def condition_options(self, port):
         return [self.comparisons[port], self.thresholds[port]]
