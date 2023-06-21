@@ -106,6 +106,7 @@ def action_menu(ev3, program):
     down = False
     refresh = True
     multi_option_list = [names, ports, lib.VELOCITIES]
+    print("action multi option:", multi_option_list)
     while True:
         if refresh:
             choices = program.action_choices(names[name])
@@ -126,14 +127,17 @@ def action_menu(ev3, program):
                     row = mod_inc(row, len(rows))
                 elif Button.LEFT in pressed:
                     updated = mod_dec(choices[row], len(multi_option_list[row]))
+                    print('num', len(multi_option_list[row]), row)
                 elif Button.RIGHT in pressed:
                     if row == 0 and choices[row] + 1 == len(names):
                         names.append("A" + str(len(names) + 1))
                     updated = mod_inc(choices[row], len(multi_option_list[row]))
+                    print('num', len(multi_option_list[row]), row)
                 if updated is not None:
                     if row == 0:
                         name = updated
                     elif row == 1:
+                        print(multi_option_list[1], updated)
                         program.change_action_port(names[name], multi_option_list[1][updated])
                     elif row == 2:
                         program.actions[names[name]].velocity = multi_option_list[2][updated]

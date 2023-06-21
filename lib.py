@@ -44,6 +44,8 @@ class Program:
             else:
                 self.motors[m] = None
 
+        self.motor_ports.sort()
+
         self.sensors = {}
         self.readings = {}
         self.sensor_ports = []
@@ -154,10 +156,10 @@ class Program:
         return ['None'] + sorted(self.actions)
 
     def live_motors(self):
-        return [name for name in self.motors if self.motors[name] is not None]
+        return sorted([name for name in self.motors if self.motors[name] is not None])
 
     def live_sensors(self):
-        return [name for name in self.sensors if self.sensors[name] is not None]
+        return sorted([name for name in self.sensors if self.sensors[name] is not None])
 
     def num_conditions(self):
         return len(self.conditions)
