@@ -63,7 +63,7 @@ class Program:
                     self.readings[s] = lambda s=s: str(self.sensors[s].distance())
                     self.sensor_ports.append(extract_port(sensor_ports[i]))
                     self.comparisons[s] = ['<', '>']
-                    self.thresholds[s] = [str(i * 10) for i in range(1, 16)]
+                    self.thresholds[s] = [str(i * 100) for i in range(1, 16)]
                 elif sensors[i] == 'Color':
                     self.sensors[s] = ColorSensor(sensor_ports[i])
                     self.readings[s] = lambda s=s: str(self.sensors[s].color()).split('.')[-1]
@@ -105,7 +105,7 @@ class Program:
                         print("action", action)
                         action.act(self)
                     break
-            time.sleep(0.25)
+            #time.sleep(0.1)
 
         
 
@@ -189,7 +189,10 @@ class Condition:
 
     def check(self, program):
         reading = program.readings[self.port]()
-        expr = '"' + reading + '" ' + self.op + ' "' + self.threshold + '"'
+        if self.op in ('<', '>'):
+            expr = str(reading) + ' ' + self.op + ' ' + str(self.threshold)
+        else:
+            expr = '"' + reading + '" ' + self.op + ' "' + self.threshold + '"'
         print(expr)
         return self.port, reading, eval(expr)
 
