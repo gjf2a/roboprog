@@ -13,7 +13,7 @@ from menus import mod_inc, mod_dec
 motor_ports = ['A', 'B', 'C', 'D']
 motor_port_options = [['None', 'Motor']] * len(motor_ports)
 sensor_ports = ['S1', 'S2', 'S3', 'S4']
-sensor_port_options = [['None', 'Touch', 'Sonar']] * len(sensor_ports)
+sensor_port_options = [['None', 'Touch', 'Sonar', 'Color']] * len(sensor_ports)
 
 def main():
     ev3 = EV3Brick()

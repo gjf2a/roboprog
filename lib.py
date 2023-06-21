@@ -64,6 +64,12 @@ class Program:
                     self.sensor_ports.append(extract_port(sensor_ports[i]))
                     self.comparisons[s] = ['<', '>']
                     self.thresholds[s] = [str(i * 10) for i in range(1, 16)]
+                elif sensors[i] == 'Color':
+                    self.sensors[s] = ColorSensor(sensor_ports[i])
+                    self.readings[s] = lambda s=s: str(self.sensors[s].color()).split('.')[-1]
+                    self.sensor_ports.append(extract_port(sensor_ports[i]))
+                    self.comparisons[s] = ['==']
+                    self.thresholds[s] = ['BLACK', 'GREEN', 'BLUE', 'YELLOW', 'RED', 'WHITE', 'BROWN', 'None']
                 else:
                     self.sensors[s] = None
                     self.comparisons[s] = None
@@ -83,6 +89,8 @@ class Program:
         while True:
             pressed = ev3.buttons.pressed()
             if len(pressed) > 0:
+                for runner in self.runners.values():
+                    runner(0)
                 break
             readings = self.check_all_conditions()
             print("readings", readings)
