@@ -194,6 +194,8 @@ def row_menu(ev3, program):
                         program.rows[names[name]].action2 = multi_option_list[4][updated]
                     elif row == 5:
                         program.rows[names[name]].action3 = multi_option_list[5][updated]
+                    elif row == 6:
+                        program.rows[names[name]].action4 = multi_option_list[6][updated]
                 refresh = True
         else:
             down = False
