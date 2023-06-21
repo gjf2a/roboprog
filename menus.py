@@ -77,6 +77,7 @@ def menuManyOptions(ev3, list_labels: List[str], multi_option_list: List[List[st
 
 
 def refreshMany(ev3, list_labels: List[str], multi_option_list: List[List[str]], row: int, options: List[int]):
+    assert len(list_labels) == len(multi_option_list)
     ev3.screen.clear()
     for i, opt_list in enumerate(multi_option_list):
         fore, back = (Color.BLACK, Color.WHITE) if i != row else (Color.WHITE, Color.BLACK)

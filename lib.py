@@ -133,7 +133,7 @@ class Program:
 
     def row_choices(self, row_name):
         if row_name not in self.rows:
-            self.rows[row_name] = Row(row_name, 'C1', 'False', 'None', 'None', 'None')
+            self.rows[row_name] = Row(row_name, 'C1', 'False', 'None', 'None', 'None', 'None')
         return self.rows[row_name].choice_indices(self)
 
     def change_condition_port(self, condition_name, new_port):
@@ -220,16 +220,17 @@ class Action:
 
 
 class Row:
-    def __init__(self, name, condition, invert, action1, action2, action3):
+    def __init__(self, name, condition, invert, action1, action2, action3, action4):
         self.name = name
         self.condition = condition
         self.invert = invert
         self.action1 = action1
         self.action2 = action2
         self.action3 = action3
+        self.action4 = action4
 
     def __repr__(self):
-        return '[' + ','.join(["'" + s + "'" for s in [self.name, self.condition, self.invert, self.action1, self.action2, self.action3]]) + ']'
+        return '[' + ','.join(["'" + s + "'" for s in [self.name, self.condition, self.invert, self.action1, self.action2, self.action3, self.action4]]) + ']'
 
     def choice_indices(self, program):
         name_i = extract_num(self.name)
@@ -238,7 +239,8 @@ class Row:
         action_1 = program.action_list().index(self.action1)
         action_2 = program.action_list().index(self.action2)
         action_3 = program.action_list().index(self.action3)
-        return [name_i, condition_i, invert_i, action_1, action_2, action_3]
+        action_4 = program.action_list().index(self.action4)
+        return [name_i, condition_i, invert_i, action_1, action_2, action_3, action_4]
 
     def is_selected(self, readings):
         if self.condition in readings:
@@ -247,4 +249,4 @@ class Row:
         return self.condition in readings and readings[self.condition][2] != eval(self.invert)
 
     def actions(self, program):
-        return [program.actions[action] for action in [self.action1, self.action2, self.action3] if action != 'None']
+        return [program.actions[action] for action in [self.action1, self.action2, self.action3, self.action4] if action != 'None']

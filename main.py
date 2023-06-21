@@ -146,13 +146,13 @@ def action_menu(ev3, program):
 
 def row_menu(ev3, program):
     menus.wait_until_clear(ev3)
-    rows = ['Name', 'Condition', 'Inverted', 'Action1', 'Action2', 'Action3']
+    rows = ['Name', 'Condition', 'Inverted', 'Action1', 'Action2', 'Action3', 'Action4']
     names = ["R" + str(i + 1) for i in range(max(1, program.num_rows()))]
     name = 0
     row = 0
     down = False
     refresh = True
-    multi_option_list = [names, sorted(program.conditions), ["False", "True"], program.action_list(), program.action_list(), program.action_list()]
+    multi_option_list = [names, sorted(program.conditions), ["False", "True"], program.action_list(), program.action_list(), program.action_list(), program.action_list()]
     while True:
         if refresh:
             choices = program.row_choices(names[name])
